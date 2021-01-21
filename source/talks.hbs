@@ -1,0 +1,54 @@
+<div class="talks" data-js-id="talks">
+    {{>header}}
+    {{>test this}}
+    {{#each talks}}
+    <section class="talk-head">
+        <h3 class="talk-title"><a target="_blank" rel="nofollow">{{this.title}}</a></h3>
+        <div class="visible-mobile"><a href="{{this.slidesUrl}}" target="_blank" rel="nofollow"
+                class="preview-link">Check out <strong>Slides</strong> of this talk</a></div>
+        <div class="preview hidden-mobile">
+            <nav class="preview-tabs"><button class="preview-tab active">Slides</button></nav>
+            <div class="preview-content">
+                <div class="hidden-mobile hidden-print"
+                    style="padding-bottom: 56.25%; background-color: rgb(238, 238, 238); position: relative;"><iframe
+                        src="{{this.slidesUrl}}" frameborder="0"
+                        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen="" scrolling="no"
+                        style="display: block; width: 100%; height: 100%; margin-bottom: 0px; position: absolute; top: 0px; left: 0px;"></iframe>
+                </div>
+            </div>
+            <div dir="ltr" class="resize-sensor"
+                style="pointer-events: none; position: absolute; inset: 0px; overflow: hidden; z-index: -1; visibility: hidden; max-width: 100%;">
+                <div class="resize-sensor-expand"
+                    style="pointer-events: none; position: absolute; inset: 0px; overflow: hidden; z-index: -1; visibility: hidden; max-width: 100%;">
+                    <div
+                        style="position: absolute; left: 0px; top: 0px; transition: all 0s ease 0s; width: 558px; height: 352px;">
+                    </div>
+                </div>
+                <div class="resize-sensor-shrink"
+                    style="pointer-events: none; position: absolute; inset: 0px; overflow: hidden; z-index: -1; visibility: hidden; max-width: 100%;">
+                    <div
+                        style="position: absolute; left: 0px; top: 0px; transition: all 0s ease 0s; width: 200%; height: 200%;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p style="margin: 1em 0px; line-height: 2;">{{this.description}}</p>
+        <div dir="ltr" class="resize-sensor"
+            style="pointer-events: none; position: absolute; inset: 0px; overflow: hidden; z-index: -1; visibility: hidden; max-width: 100%;">
+            <div class="resize-sensor-expand"
+                style="pointer-events: none; position: absolute; inset: 0px; overflow: hidden; z-index: -1; visibility: hidden; max-width: 100%;">
+                <div
+                    style="position: absolute; left: 0px; top: 0px; transition: all 0s ease 0s; width: 560px; height: 721px;">
+                </div>
+            </div>
+            <div class="resize-sensor-shrink"
+                style="pointer-events: none; position: absolute; inset: 0px; overflow: hidden; z-index: -1; visibility: hidden; max-width: 100%;">
+                <div
+                    style="position: absolute; left: 0px; top: 0px; transition: all 0s ease 0s; width: 200%; height: 200%;">
+                </div>
+            </div>
+        </div>
+    </section>
+    {{/each}}
+</div>
