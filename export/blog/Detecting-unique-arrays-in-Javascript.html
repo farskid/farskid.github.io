@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+
+<body>
+    <header>
+        <img src="/assets/feri.jpg" alt="Farzad Yousefzadeh" />
+        <h1>Farzad Yousefzadeh</h1>
+        <nav>
+            <ul>
+                <li><a href="/">About</a></li>
+                <li><a href="/cv">CV</a></li>
+                <li><a href="/talks">Talks</a></li>
+                <li><a href="/blog">Blog</a></li>
+            </ul>
+            <a>Follow @farzad_yz on Twitter</a>
+        </nav>
+    </header>
+    <link rel="stylesheet" href="//unpkg.com/@highlightjs/cdn-assets@10.5.0/styles/atom-one-dark.min.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&family=IBM+Plex+Sans:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Serif:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'IBM Plex Sans',
+                sans-serif;
+        }
+    
+        pre,
+        code {
+            font-family: 'IBM Plex Mono',
+                monospace;
+        }
+    
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: 'IBM Plex Serif',
+        }
+    </style>    <main>
+        <h1>Detecting unique arrays in Javascript</h1>
+        <p
+            style="font-size: 0.87055rem; line-height: 1.5rem; display: block; margin-bottom: 1.5rem; margin-top: -1.5rem;">
+            2019-12-24</p>
+        <article><p>When Javascript arrays contain primitive values (strings, numbers, undefined, null, booleans and Symbols), there might be cases in which you're willing to detect if the array contains any duplicated elements. in other words, you would want to determine if elements in the array are unique.</p>
+<p>There are several approaches you can take to achieve this. let's take a closer look at our options.</p>
+<h2>Approach 1: Nested loops</h2>
+<p>In this approach, we will traverse the array, starting from the first element and for each element, we will compare this element to all the other elements to see if there is a match. to achieve this, we will use two <code>for loops</code>, nested into each other.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isUnique</span>(<span class="hljs-params">arr</span>) </span>{
+  <span class="hljs-keyword">const</span> len = arr.length;
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; len; i++) {
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> j = <span class="hljs-number">0</span>; j &lt; len; j++) {
+      <span class="hljs-comment">// if the elements match, this wouldn&#x27;t be a unique array</span>
+      <span class="hljs-keyword">if</span> (i !== j &amp;&amp; arr[i] === arr[j]) {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+      }
+    }
+  }
+  <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+}
+</code></pre>
+<p>Although this approach works quite fine with small and semi-small datasets, as the input dataset grows, it gets slower and slower. The slowness of this approach is because of the nested loop. Imagine a dataset of a million numbers. in this dataset, in the worst case, our duplicated element could be the last element in the array and therefore, we would need to compare a million numbers to a million numbers (1 million * 1 million), which is quite slow.</p>
+<p><a href="https://jsfiddle.net/farskid/bquo7k8x/12/">https://jsfiddle.net/farskid/bquo7k8x/12/</a></p>
+<p>&lt;iframe width=&quot;100%&quot; height=&quot;300&quot; src=&quot;//jsfiddle.net/farskid/bquo7k8x/9/embedded/js/dark/&quot; allowfullscreen=&quot;allowfullscreen&quot; allowpaymentrequest frameborder=&quot;0&quot;&gt;&lt;/iframe&gt;</p>
+<h2>Approach 2: Single loop with cached values</h2>
+<p>In this approach, instead of comparing each element to every other element, we will keep track of the elements we visit and weren't a match for a duplicated element. in other words, we cache what we traverse and just look them up for the next element to check if we've already visited such an element. Because of this visited reference, we only need to compare every element in the array to this reference and therefore, we have to traverse this array only once.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isUnique</span>(<span class="hljs-params">arr</span>) </span>{
+  <span class="hljs-keyword">const</span> seenValues = {};
+
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; arr.length; i++) {
+    <span class="hljs-comment">// we already saw this element in the array</span>
+    <span class="hljs-keyword">if</span> (seenValues[arr[i]]) {
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    } <span class="hljs-keyword">else</span> {
+      seenValues[arr[i]] = <span class="hljs-literal">true</span>;
+    }
+  }
+
+  <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+}
+</code></pre>
+<p>in the worst case of a million numbers in a dataset, our duplicated element will be the last element but in this approach, we only compare 1 million times. This approach is significantly faster than approach 1. [](see the benchmark at the end of article).</p>
+<p><a href="https://jsfiddle.net/farskid/zky1mdug/18/">https://jsfiddle.net/farskid/zky1mdug/18/</a></p>
+<p>&lt;iframe width=&quot;100%&quot; height=&quot;300&quot; src=&quot;//jsfiddle.net/farskid/zky1mdug/15/embedded/js/dark/&quot; allowfullscreen=&quot;allowfullscreen&quot; allowpaymentrequest frameborder=&quot;0&quot;&gt;&lt;/iframe&gt;</p>
+<h2>Approach 3: using ES6 <code>set</code></h2>
+<p>When ES6 came around, we were introduced to a new data structure in Javascript called <code>Set</code>s. Sets are collection of elements that are unique by definition, meaning that if you try to insert a duplicated element into a set, it won't have any effects.</p>
+<p>Due to <code>Set</code>s being a collection of unique elements by definition, there is a technique to convert arrays into sets which in turn, results in a unique collection of items in that array, now stored into the set. then a reverse operation will be used to convert that <code>Set</code> back to an array.</p>
+<p>In a sense, you could say, <code>Set</code> is used as an intermediate data structure to remove duplicated elements from the array.</p>
+<p><code>Array -&gt; Set -&gt; Array</code></p>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// convert an array to a set and convert back</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getUniqueArray</span>(<span class="hljs-params">arr</span>) </span>{
+  <span class="hljs-keyword">return</span> [...new <span class="hljs-built_in">Set</span>(arr)];
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isUnique</span>(<span class="hljs-params">arr</span>) </span>{
+  <span class="hljs-keyword">return</span> getUniqueArray(arr).length === arr.length;
+}
+</code></pre>
+<p>in this approach, if the number of elements inside the unique array (converted back from Set) is the same as the input array length, it means this array has already been containing unique values and no duplicated values were removed from it to alter the length.</p>
+<blockquote>
+<p>Note: You don't need to convert a <code>Set</code> back to array if you just want to check for uniqueness. You can skip this part of operation totally by checking <code>Set.prototype.size</code>.</p>
+</blockquote>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// convert an array to a set</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">arrayToSet</span>(<span class="hljs-params">arr</span>) </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Set</span>(arr);
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isUnique</span>(<span class="hljs-params">arr</span>) </span>{
+  <span class="hljs-keyword">return</span> arrayToSet(arr).size === arr.length;
+}
+</code></pre>
+<h2>Performance comparison</h2>
+<p>Using any of these 3 approaches interchangeably is fine as long as your dataset is relatively small. for larger datasets, you need to keep an eye on performance of these approaches and how many operations they could execute in a limited duration.</p>
+<p>The short answer for performance comparison between these 3 is:</p>
+<p><code>Approach 2 &gt; Approach 3 &gt; Approach 1</code>.</p>
+<p>Approach 2 (using single loop with cached values) is significantly faster than the rest. between approach 3 (Set) and approach 1 (Nested loops), approach 3 is also much faster.</p>
+<p>To have a better understanding of these performance comparisons, take a look at this benchmark:</p>
+<p><a href="https://esbench.com/bench/5e0273c1170166009e5470f7">https://esbench.com/bench/5e0273c1170166009e5470f7</a></p>
+<h3>Side note for whoever is curious</h3>
+<p>Approach 1 (using nested loops) is of quadratic complexity, meaning that it will result in O(n^2) Time complexity.</p>
+<p>Approach 2 (using single loop and cached values) is of linear complexity, meaning that it will result in O(n) Time complexity.</p>
+<p>For approach 3, I won't have a strong opinion as I'm not fully aware of how <code>Set</code>s are being implemented in Javascript engines under the hood.</p>
+<h2>Conclusion for the impatient</h2>
+<p>Do not pre-optimize for a problem you don't have. Performance optimizations make sense only when you have a large dataset to bring slowness onto surface. for relatively small datasets, it won't matter which approach you take as all will behave fast enough. for larger datasets, always lean towards using approach 2 as benchmarks show it's significantly faster.</p>
+<p><img src="https://thepracticaldev.s3.amazonaws.com/i/mawv2bokl4z4cny271b5.png" alt="Benchmarks"></p>
+</article>
+        <footer>
+            Next Post: <a href="/blog/Unit-Testing-Higher-Order-Components-with-Enzyme-and-Jest">Unit-Testing-Higher-Order-Components-with-Enzyme-and-Jest</a>
+            Prev Post: <a href="/blog/Cross-Domain-Iframe-parent-communication">Cross-Domain-Iframe-parent-communication</a>
+        </footer>
+    </main>
+    <footer class="footer">
+        <p>The materials of this website are licensed under<a target="_blank"
+                href="https://creativecommons.org/licenses/by-nc/2.0/"
+                style="margin-left: 0.375rem; display: inline-block;">The
+                Creative Commons</a></p>
+        <p>Farzad Yousefzadeh @2021</p>
+    </footer></body>
+
+</html>

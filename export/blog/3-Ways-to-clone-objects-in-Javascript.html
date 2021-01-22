@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+
+<body>
+    <header>
+        <img src="/assets/feri.jpg" alt="Farzad Yousefzadeh" />
+        <h1>Farzad Yousefzadeh</h1>
+        <nav>
+            <ul>
+                <li><a href="/">About</a></li>
+                <li><a href="/cv">CV</a></li>
+                <li><a href="/talks">Talks</a></li>
+                <li><a href="/blog">Blog</a></li>
+            </ul>
+            <a>Follow @farzad_yz on Twitter</a>
+        </nav>
+    </header>
+    <link rel="stylesheet" href="//unpkg.com/@highlightjs/cdn-assets@10.5.0/styles/atom-one-dark.min.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&family=IBM+Plex+Sans:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Serif:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'IBM Plex Sans',
+                sans-serif;
+        }
+    
+        pre,
+        code {
+            font-family: 'IBM Plex Mono',
+                monospace;
+        }
+    
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: 'IBM Plex Serif',
+        }
+    </style>    <main>
+        <h1>3 Ways to clone objects in Javascript</h1>
+        <p
+            style="font-size: 0.87055rem; line-height: 1.5rem; display: block; margin-bottom: 1.5rem; margin-top: -1.5rem;">
+            2017-10-01</p>
+        <article><p>Cloning an object is somewhat a task that is almost always used in any project from a simple one to the most complicated ones.
+As it may seem simple for not seasoned Javascript developers, it actually has some pitfalls that would hurt you in the bones if you didn’t know the proper way to do it.</p>
+<h2>Talk is cheap, show me the code</h2>
+<p>The first way that could cross a developer’s mind is to deeply iterate through source object’s properties and copy them one by one on the target object. As it may seem good at the beginning, it is not a performance friendly solution and a potential bottleneck when it comes to large and deep objects.</p>
+<h3>1: Deep copy using iteration</h3>
+<pre><code class="hljs language-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">iterationCopy</span>(<span class="hljs-params">src</span>) </span>{
+  <span class="hljs-keyword">let</span> target = {};
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> prop <span class="hljs-keyword">in</span> src) {
+    <span class="hljs-keyword">if</span> (src.hasOwnProperty(prop)) {
+      target[prop] = src[prop];
+    }
+  }
+  <span class="hljs-keyword">return</span> target;
+}
+<span class="hljs-keyword">const</span> source = { <span class="hljs-attr">a</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">b</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">c</span>: <span class="hljs-number">3</span> };
+<span class="hljs-keyword">const</span> target = iterationCopy(source);
+<span class="hljs-built_in">console</span>.log(target); <span class="hljs-comment">// {a:1, b:2, c:3}</span>
+<span class="hljs-comment">// Check if clones it and not changing it</span>
+source.a = <span class="hljs-string">&quot;a&quot;</span>;
+<span class="hljs-built_in">console</span>.log(source.a); <span class="hljs-comment">// &#x27;a&#x27;</span>
+<span class="hljs-built_in">console</span>.log(target.a); <span class="hljs-comment">// 1</span>
+</code></pre>
+<p>So as you see, it’s working!</p>
+<p>Now let’s cut the chase to the second solution which is indeed more elegant but, more limited to use.</p>
+<h3>2: Converting to JSON and back</h3>
+<pre><code class="hljs language-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">jsonCopy</span>(<span class="hljs-params">src</span>) </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-built_in">JSON</span>.parse(<span class="hljs-built_in">JSON</span>.stringify(src));
+}
+<span class="hljs-keyword">const</span> source = { <span class="hljs-attr">a</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">b</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">c</span>: <span class="hljs-number">3</span> };
+<span class="hljs-keyword">const</span> target = jsonCopy(source);
+<span class="hljs-built_in">console</span>.log(target); <span class="hljs-comment">// {a:1, b:2, c:3}</span>
+<span class="hljs-comment">// Check if clones it and not changing it</span>
+source.a = <span class="hljs-string">&quot;a&quot;</span>;
+<span class="hljs-built_in">console</span>.log(source.a); <span class="hljs-comment">// &#x27;a&#x27;</span>
+<span class="hljs-built_in">console</span>.log(target.a); <span class="hljs-comment">// 1</span>
+</code></pre>
+<p>Note: Be careful about using this method as your source object MUST be JSON safe. So it may need some sort of exception handling to keep it safe in cases in which the source object is not convertible to JSON.</p>
+<h3>3: Using Object.assign</h3>
+<blockquote>
+<p>Update: This method has a flaw that it only does a shallow copy. It means that nested properties are still going to be copied by reference. Be careful about it.</p>
+</blockquote>
+<p>This way is the best and the safest way I personally consume in my projects.It’s leveraging a built-in static method on the Object object and is handled and provided by the language. So use this one!</p>
+<pre><code class="hljs language-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">bestCopyEver</span>(<span class="hljs-params">src</span>) </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-built_in">Object</span>.assign({}, src);
+}
+<span class="hljs-keyword">const</span> source = { <span class="hljs-attr">a</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">b</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">c</span>: <span class="hljs-number">3</span> };
+<span class="hljs-keyword">const</span> target = bestCopyEver(source);
+<span class="hljs-built_in">console</span>.log(target); <span class="hljs-comment">// {a:1, b:2, c:3}</span>
+<span class="hljs-comment">// Check if clones it and not changing it</span>
+source.a = <span class="hljs-string">&quot;a&quot;</span>;
+<span class="hljs-built_in">console</span>.log(source.a); <span class="hljs-comment">// &#x27;a&#x27;</span>
+<span class="hljs-built_in">console</span>.log(target.a); <span class="hljs-comment">// 1</span>
+</code></pre>
+<h2>Conclusion</h2>
+<p>You must know that every framework and including libraries such as Lodash and Underscore has a way to support cloning objects. Almost all of them used a more complex version of iterationCopy before ES6 was introduced. On ES6+ environments, there is language support for Object.assign , so try to use the most out of it. As a rule of thumb, always try to use the 3rd solution and avoid the JSON solution.</p>
+<p>Keep calm and clone objects without any hesitation :)</p>
+</article>
+        <footer>
+            Next Post: <a href="/blog/Cross-Domain-Iframe-parent-communication">Cross-Domain-Iframe-parent-communication</a>
+        </footer>
+    </main>
+    <footer class="footer">
+        <p>The materials of this website are licensed under<a target="_blank"
+                href="https://creativecommons.org/licenses/by-nc/2.0/"
+                style="margin-left: 0.375rem; display: inline-block;">The
+                Creative Commons</a></p>
+        <p>Farzad Yousefzadeh @2021</p>
+    </footer></body>
+
+</html>

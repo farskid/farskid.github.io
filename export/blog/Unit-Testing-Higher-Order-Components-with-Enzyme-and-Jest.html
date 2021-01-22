@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+
+<body>
+    <header>
+        <img src="/assets/feri.jpg" alt="Farzad Yousefzadeh" />
+        <h1>Farzad Yousefzadeh</h1>
+        <nav>
+            <ul>
+                <li><a href="/">About</a></li>
+                <li><a href="/cv">CV</a></li>
+                <li><a href="/talks">Talks</a></li>
+                <li><a href="/blog">Blog</a></li>
+            </ul>
+            <a>Follow @farzad_yz on Twitter</a>
+        </nav>
+    </header>
+    <link rel="stylesheet" href="//unpkg.com/@highlightjs/cdn-assets@10.5.0/styles/atom-one-dark.min.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&family=IBM+Plex+Sans:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Serif:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'IBM Plex Sans',
+                sans-serif;
+        }
+    
+        pre,
+        code {
+            font-family: 'IBM Plex Mono',
+                monospace;
+        }
+    
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: 'IBM Plex Serif',
+        }
+    </style>    <main>
+        <h1>Unit Testing Higher Order Components with Enzyme and Jest</h1>
+        <p
+            style="font-size: 0.87055rem; line-height: 1.5rem; display: block; margin-bottom: 1.5rem; margin-top: -1.5rem;">
+            2017-11-03</p>
+        <article><p>Not all the components you write for your React application can be divided into Stateful and Stateless (dumb) categories. There is a 3rd advanced type of component in React called a higher-order component. A higher-order component is a function that takes a component as an argument and returns another component. Check out my other article to see how higher-order components are used in the real world.</p>
+<h2>Creating a HOC with Tests</h2>
+<p>We’ll be using Enzyme and Jest, but these concepts apply to any testing library.</p>
+<p>One of the common HOCs I write for every project of mine is called withConditional. Its purpose is to render a component if and only if the condition passes, otherwise just return null.</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react&quot;</span>;
+<span class="hljs-keyword">const</span> withConditional = <span class="hljs-function">(<span class="hljs-params">Component</span>) =&gt;</span>
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">withConditionalComponent</span>(<span class="hljs-params">{ condition, ...props }</span>) </span>{
+    <span class="hljs-keyword">if</span> (condition) {
+      <span class="hljs-keyword">return</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Component</span> {<span class="hljs-attr">...props</span>} /&gt;</span></span>;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+  };
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> withConditional;
+</code></pre>
+<p>As you can see, when the condition passed to the HOC evaluates to true, it returns the component, otherwise it returns null.</p>
+<p>So how can you unit test the HOC? There are surprisingly minimal articles talking about unit testing these components, and I had a hard time figuring out the proper way. Recently the solution clicked!</p>
+<h2>Solution</h2>
+<p>To properly test these badass components, you just need to know that they are simple functions and that’s all!</p>
+<p><code>withConditional</code> is used in the following manner</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> ConditionalComponent = withConditional(MyComponent);
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">HelloWorld</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  <span class="hljs-function"><span class="hljs-title">render</span>(<span class="hljs-params"></span>)</span> {
+    <span class="hljs-keyword">return</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">ConditionalComponent</span> <span class="hljs-attr">condition</span>=<span class="hljs-string">{3</span> &gt;</span> 4} /&gt;</span>;
+  }
+}
+</code></pre>
+<p>So, we should use the exact same concept to unit test them as well.</p>
+<p>The important thing to take into account here is to test the component for all states. For instance, if our HOC can handle two different states, depending on the condition passed to it, then we MUST account for both states in the tests.</p>
+<h2>When condition passes:</h2>
+<pre><code class="hljs language-js">it(<span class="hljs-string">&quot;should render the component only when the condition passes&quot;</span>, <span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-keyword">const</span> ConditionalComponent = withConditional(Component);
+  <span class="hljs-keyword">const</span> wrapper = shallow(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">ConditionalComponent</span> <span class="hljs-attr">condition</span>=<span class="hljs-string">{true}</span> /&gt;</span></span>);
+  expect(wrapper.html()).not.toBe(<span class="hljs-literal">null</span>);
+});
+</code></pre>
+<h2>When condition fails:</h2>
+<pre><code class="hljs language-js">it(<span class="hljs-string">&quot;should return null when the condition fails&quot;</span>, <span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-keyword">const</span> ConditionalComponent = withConditional(Component);
+  <span class="hljs-keyword">const</span> wrapper = shallow(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">ConditionalComponent</span> <span class="hljs-attr">condition</span>=<span class="hljs-string">{false}</span> /&gt;</span></span>);
+  expect(wrapper.html()).toBe(<span class="hljs-literal">null</span>);
+});
+</code></pre>
+<p>Have fun and test it up!</p>
+</article>
+        <footer>
+            Next Post: <a href="/blog/useBackButton-hook-to-handle-back-button-behavior-in-React-Native">useBackButton-hook-to-handle-back-button-behavior-in-React-Native</a>
+            Prev Post: <a href="/blog/Detecting-unique-arrays-in-Javascript">Detecting-unique-arrays-in-Javascript</a>
+        </footer>
+    </main>
+    <footer class="footer">
+        <p>The materials of this website are licensed under<a target="_blank"
+                href="https://creativecommons.org/licenses/by-nc/2.0/"
+                style="margin-left: 0.375rem; display: inline-block;">The
+                Creative Commons</a></p>
+        <p>Farzad Yousefzadeh @2021</p>
+    </footer></body>
+
+</html>

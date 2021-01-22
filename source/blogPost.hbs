@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{siteTitle}}</title>
+</head>
+
+<body>
+    {{>header }}
+    <main>
+        <h1>{{post.title}}</h1>
+        <p
+            style="font-size: 0.87055rem; line-height: 1.5rem; display: block; margin-bottom: 1.5rem; margin-top: -1.5rem;">
+            {{post.publishedAt}}</p>
+        <article>{{{post.html}}}</article>
+        <footer>
+            {{#if post.nextSlug}}
+            Next Post: <a href="/blog/{{post.nextSlug}}">{{post.nextSlug}}</a>
+            {{/if}}
+            {{#if post.prevSlug}}
+            Prev Post: <a href="/blog/{{post.prevSlug}}">{{post.prevSlug}}</a>
+            {{/if}}
+        </footer>
+    </main>
+    {{>footer}}
+</body>
+
+</html>

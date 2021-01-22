@@ -1,0 +1,13 @@
+<div class="layout-container-limited">
+    {{>header}}
+    {{#each blogPosts}}
+    <article style="margin-bottom: 3rem;">
+        <h2 style="margin-bottom: 0.75rem;"><a href="/blog/{{this.slug}}"
+                style="text-decoration: none;">{{this.title}}</a>
+        </h2>
+        <p style="margin-bottom: 0.75rem; display: block; color: rgb(119, 119, 119);">{{this.publishedAt}}</p>
+        <div>{{this.summary}}</div>
+    </article>
+    {{/each}}
+    {{>footer this}}
+</div>
