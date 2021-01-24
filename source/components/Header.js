@@ -1,4 +1,5 @@
-<header class="site-header">
+export default function Header() {
+  return `<header class="site-header">
     <div class="site-header-avatar">
         <img src="/assets/feri.jpg" alt="Farzad Yousefzadeh" />
     </div>
@@ -30,4 +31,5 @@
 <link rel="preconnect" href="https://fonts.gstatic.com">
 <link
     href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&family=IBM+Plex+Sans:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Serif:ital,wght@0,400;0,700;1,400&display=swap"
-    rel="stylesheet">
+    rel="stylesheet">`;
+}

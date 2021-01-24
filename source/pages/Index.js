@@ -1,5 +1,8 @@
-{{#extend layout}}
-{{#content}}
+import Layout from "../components/Layout";
+
+export default function Index() {
+  return Layout({
+    children: `
 <section style="margin-bottom:3.75rem">
     <h1>Howdy! My name is Farzad YZ
     </h1>
@@ -42,4 +45,6 @@
             target="_blank" href="https://www.linkedin.com/in/farzadyz">Linkedin</a>.</p>
 </section>
 {{/content}}
-{{/layout}}
+{{/layout}}`,
+  });
+}
